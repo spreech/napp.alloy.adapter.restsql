@@ -221,6 +221,16 @@ Set this property to true, if you want to get the local data immediately, and ge
 	}
 
 
+### expireIn
+
+Define an expiration time in milliseconds, if set all requests will be handled localy until the specified time has expired
+
+	config: {
+		...
+		"expireIn" : 10 * 60 * 1000 // expire in 10 minutes
+	}
+
+
 ### returnErrorResponse
 
 Set this property to true if you want the error response object from the remote server. Default behaviour is not to return this, but return the data stored locally. 

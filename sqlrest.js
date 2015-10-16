@@ -474,6 +474,37 @@ function Sync(method, model, opts) {
 			params.url = encodeData(obj, params.url);
 		}
 
+		if(!params.expireIn) {
+        	params.expireIn = (model.config.expireIn || false);
+        }
+        
+        if(params.expireIn) {
+        	
+        	params.expireIn = parseInt(params.expireIn);
+        	var date		= new Date();
+        	
+        	if(typeof model.expireTimes !== 'undefined' && (model.expireTimes != null && model.expireTimes!="")) {
+        		
+        		var expire = model.expireTimes;
+        			
+    			logger(DEBUG, "expiration", expire);
+        		
+        		if( expire > date.getTime() ) {
+        			
+        			params.localOnly = true;
+        		
+        		} else {
+        			
+        			model.expireTimes = date.getTime()+params.expireIn;
+        		
+        		}
+        		
+        	} else {
+        		model.expireTimes = date.getTime()+params.expireIn;
+        	}
+        	
+        }
+
 		logger(DEBUG, "read options", params);
 
 		if (!params.localOnly && params.initFetchWithLocalData) {
