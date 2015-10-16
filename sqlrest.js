@@ -209,7 +209,7 @@ function apiCall(_options, _callback) {
 
 			cleanup();
 		};
-		
+
 		//Prepare the request
 		xhr.open(_options.type, _options.url);
 
@@ -228,7 +228,7 @@ function apiCall(_options, _callback) {
 			etag && xhr.setRequestHeader('IF-NONE-MATCH', etag);
 		}
 
-        	
+
 
 		xhr.send(_options.data);
 	} else {
@@ -475,35 +475,33 @@ function Sync(method, model, opts) {
 		}
 
 		if(!params.expireIn) {
-        	params.expireIn = (model.config.expireIn || false);
-        }
-        
-        if(params.expireIn) {
-        	
-        	params.expireIn = parseInt(params.expireIn);
-        	var date		= new Date();
-        	
-        	if(typeof model.expireTimes !== 'undefined' && (model.expireTimes != null && model.expireTimes!="")) {
-        		
-        		var expire = model.expireTimes;
-        			
-    			logger(DEBUG, "expiration", expire);
-        		
-        		if( expire > date.getTime() ) {
-        			
-        			params.localOnly = true;
-        		
-        		} else {
-        			
-        			model.expireTimes = date.getTime()+params.expireIn;
-        		
-        		}
-        		
-        	} else {
-        		model.expireTimes = date.getTime()+params.expireIn;
-        	}
-        	
-        }
+    	params.expireIn = (model.config.expireIn || false);
+    }
+
+    if(params.expireIn) {
+
+    	params.expireIn = parseInt(params.expireIn);
+    	var date = new Date();
+
+    	if(typeof model.expireTimes !== 'undefined' && (model.expireTimes != null && model.expireTimes!="")) {
+
+        var urlKey = Ti.Utils.base64encode(params.url);
+      	var expire = model.expireTimes[urlKey];
+
+  			logger(DEBUG, "expiration", expire);
+
+    		if( expire > date.getTime() ) {
+    			params.localOnly = true;
+    		} else {
+    			model.expireTimes[urlKey] = date.getTime()+params.expireIn;
+    		}
+
+    	} else {
+        model.expireTimes = {};
+    		model.expireTimes[urlKey] = date.getTime()+params.expireIn;
+    	}
+
+    }
 
 		logger(DEBUG, "read options", params);
 
